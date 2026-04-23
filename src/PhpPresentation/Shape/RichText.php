@@ -220,9 +220,13 @@ class RichText extends AbstractShape implements ComparableInterface
 
     public function getActiveParagraph(): Paragraph
     {
+        if (empty($this->richTextParagraphs)) {
+            $this->richTextParagraphs = [new Paragraph()];
+            $this->activeParagraph = 0;
+        }
+    
         return $this->richTextParagraphs[$this->activeParagraph];
     }
-
     /**
      * Set active paragraph.
      */
@@ -360,8 +364,8 @@ class RichText extends AbstractShape implements ComparableInterface
     public function setParagraphs(array $paragraphs = []): self
     {
         $this->richTextParagraphs = $paragraphs;
-        $this->activeParagraph = count($this->richTextParagraphs) - 1;
-
+        $this->activeParagraph = max(0, count($this->richTextParagraphs) - 1);
+    
         return $this;
     }
 
