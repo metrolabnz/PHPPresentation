@@ -111,7 +111,7 @@ class Color implements ComparableInterface
      *
      * @return $this
      */
-    public function setAlpha(int $alpha = 100): self
+    public function setAlpha(int|float $alpha = 100): self
     {
         if ($alpha < 0) {
             $alpha = 0;
