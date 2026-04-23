@@ -75,21 +75,31 @@ class Base64 extends AbstractDrawingAdapter
 
     public function getContents(): string
     {
-        [, $imageContents] = explode(';', $this->getData());
-        [, $imageContents] = explode(',', $imageContents);
-
+        logger('Base64 data: ' . substr($this->getData(), 0, 100));
+        $parts = explode(';', $this->getData());
+        if (count($parts) < 2) {
+            return '';
+        }
+        [, $imageContents] = $parts;
+        $contentParts = explode(',', $imageContents);
+        if (count($contentParts) < 2) {
+            return '';
+        }
+        [, $imageContents] = $contentParts;
         return base64_decode($imageContents);
     }
 
     public function getExtension(): string
     {
         [$data] = explode(';', $this->getData());
-        [, $mime] = explode(':', $data);
-
+        $mimeParts = explode(':', $data);
+        if (count($mimeParts) < 2) {
+            return 'png'; // sensible fallback
+        }
+        [, $mime] = $mimeParts;
         if (!array_key_exists($mime, $this->arrayMimeExtension)) {
             throw new UnauthorizedMimetypeException($mime, $this->arrayMimeExtension);
         }
-
         return $this->arrayMimeExtension[$mime];
     }
 
