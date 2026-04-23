@@ -110,13 +110,16 @@ class Base64 extends AbstractDrawingAdapter
 
     public function getMimeType(): string
     {
-        [$data] = explode(';', $this->getData());
-        [, $mime] = explode(':', $data);
-
+        $parts = explode(';', $this->getData());
+        [$data] = $parts;
+        $mimeParts = explode(':', $data);
+        if (count($mimeParts) < 2) {
+            return 'image/png'; // sensible fallback
+        }
+        [, $mime] = $mimeParts;
         if (!empty($mime)) {
             return $mime;
         }
-
         $sImage = $this->getContents();
         if (!function_exists('getimagesizefromstring')) {
             $uri = 'data://application/octet-stream;base64,' . base64_encode($sImage);
@@ -124,7 +127,6 @@ class Base64 extends AbstractDrawingAdapter
         } else {
             $image = getimagesizefromstring($sImage);
         }
-
         return image_type_to_mime_type($image[2]);
     }
 
